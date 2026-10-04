@@ -43,13 +43,21 @@
           <span class="hint">Input plain-text hardware behavior, noises, or thermal events</span>
         </div>
 
-        <!-- Quick Preset Case Chips -->
+        <!-- Quick Preset Case Chips & Log Upload -->
         <div class="presets-bar">
           <span class="preset-label">Quick Test Scenarios:</span>
           <div class="preset-chips" id="preset-chips">
             <!-- Dynamically populated from /api/examples -->
           </div>
+          <div class="upload-action">
+            <input type="file" id="hwinfo-file-input" accept=".txt,.csv,.log" style="display: none;">
+            <button type="button" id="upload-hwinfo-btn" class="btn btn-sm btn-outline btn-hwinfo" title="Upload HWiNFO64 sensor log (.txt or .csv) to auto-extract telemetry">
+              📁 Upload HWiNFO Log (.txt)
+            </button>
+          </div>
         </div>
+
+        <div id="file-status-badge" class="file-status-badge" style="display: none;"></div>
 
         <div class="input-wrapper">
           <textarea 

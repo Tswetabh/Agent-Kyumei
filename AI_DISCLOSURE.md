@@ -35,13 +35,15 @@ This document provides a transparent, auditable disclosure of the AI tools utili
 - `examples/02_gpu_artifacting.json`: Benchmark scenario for graphics memory corruption.
 - `examples/03_swollen_battery.json`: Benchmark scenario for lithium-ion battery swelling safety escalation.
 - `examples/04_vague_input.json`: Benchmark scenario for ambiguous input triage (`needs_more_info`).
+- `examples/05_hwinfo_thermal.json`: Benchmark scenario for HWiNFO64 sensor log telemetry.
+- `examples/hwinfo_thermal_throttle.txt`: Sample HWiNFO64 sensor log file for file upload and parser testing.
 
 ### Phase 5: Interactive User Interface
-- `app/static/index.html`: Accessible, responsive single-page diagnostic dashboard.
-- `app/static/style.css`: Curated dark-mode design system with bi-directional cause-evidence highlight glowing states.
-- `app/static/app.js`: Reactive ES6 client managing live health telemetry, 1-click test presets, and dynamic hover cross-linking.
+- `app/static/index.html`: Accessible, responsive single-page diagnostic dashboard with HWiNFO log file upload button.
+- `app/static/style.css`: Curated dark-mode design system with bi-directional cause-evidence highlight glowing states and file upload styles.
+- `app/static/app.js`: Reactive ES6 client managing live health telemetry, 1-click test presets, client-side HWiNFO64 log parser, and dynamic hover cross-linking.
 
 ### Phase 6: Automated Testing & Verification
 - `tests/test_schema_and_guardrails.py`: Pytest suite verifying schema conformance, cause pruning, safety alerts, and thin-evidence handling.
-- `tests/run_examples.py`: Standalone CLI validation script running all 4 cases through the local model pipeline.
+- `tests/run_examples.py`: Standalone CLI validation script running all benchmark cases through the local model pipeline.
 - `README.md`: Submission documentation including model specs, setup commands, architecture, and disclosures.

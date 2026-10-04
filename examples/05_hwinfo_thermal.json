@@ -1,0 +1,66 @@
+{
+  "id": "05_hwinfo_thermal",
+  "title": "HWiNFO64 Telemetry: Thermal Throttle & Fan Max",
+  "category": "Sensor Log / Telemetry",
+  "symptom": "HWiNFO64 Telemetry Log Analysis [sensor_log.txt]: System: Intel Core i7-11800H @ 2.30GHz, 16GB RAM, NVIDIA GeForce RTX 3050 Laptop GPU, CPU Package Temperature: 99.4°C (Max: 100.0°C), CPU Core Thermal Throttling: Yes, CPU Power Limit / PROCHOT Reason: Yes, CPU Fan Speed: 4920 RPM, GPU Temperature: 68.2°C (Hotspot: 79.1°C), Battery Wear Level: 12.5%, Storage Drive Temp: 56.0°C. System exhibits severe thermal throttling under load.",
+  "expected_output": {
+    "status": "ok",
+    "symptom_summary": "HWiNFO64 telemetry indicates critical CPU core thermal throttling at 99.4°C and maximum fan RPM (4920 RPM) triggering hardware PROCHOT limits.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "CPU Package Temperature: 99.4°C (Max: 100.0°C)"
+      },
+      {
+        "id": "E2",
+        "text": "CPU Core Thermal Throttling: Yes"
+      },
+      {
+        "id": "E3",
+        "text": "CPU Power Limit / PROCHOT Reason: Yes"
+      },
+      {
+        "id": "E4",
+        "text": "CPU Fan Speed: 4920 RPM"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "Compromised thermal interface material (TIM) pump-out or degradation causing extreme thermal junction delta.",
+        "evidence_ids": ["E1", "E2", "E3"],
+        "confidence": "high",
+        "verification": "Inspect heatsink mounting tension and thermal paste viscosity across the CPU die."
+      },
+      {
+        "id": "C2",
+        "cause": "Cooling fin stack airflow obstruction preventing heat dissipation despite maximum fan RPM.",
+        "evidence_ids": ["E1", "E4"],
+        "confidence": "high",
+        "verification": "Check exhaust port airflow velocity using a hand or anemometer to verify restriction."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Elevate rear chassis on a solid surface and inspect external cooling intake/exhaust vents.",
+        "rationale": "Verifies passive chassis clearance non-invasively.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 2,
+        "action": "Clean heatsink fins with compressed air while device is powered down.",
+        "rationale": "Clears potential debris blankets causing the thermal block.",
+        "risk_level": "low"
+      },
+      {
+        "step_number": 3,
+        "action": "Consult technician to repaste the CPU/GPU with high-viscosity thermal compound.",
+        "rationale": "Directly resolves high thermal resistance under PROCHOT conditions.",
+        "risk_level": "medium"
+      }
+    ],
+    "safety_warning": null,
+    "follow_up_questions": []
+  }
+}

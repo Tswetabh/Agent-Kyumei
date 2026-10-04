@@ -12,7 +12,7 @@ def test_schema_validates_examples():
     assert examples_dir.exists(), "examples directory must exist"
     
     example_files = list(examples_dir.glob("*.json"))
-    assert len(example_files) == 4, f"Expected 4 example files, found {len(example_files)}"
+    assert len(example_files) >= 4, f"Expected at least 4 example files, found {len(example_files)}"
 
     for ex_file in example_files:
         with open(ex_file, "r", encoding="utf-8") as f:

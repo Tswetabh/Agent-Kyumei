@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnLabel = document.getElementById('btn-label');
   const clearBtn = document.getElementById('clear-btn');
   const copyJsonBtn = document.getElementById('copy-json-btn');
+  const uploadHwinfoBtn = document.getElementById('upload-hwinfo-btn');
+  const hwinfoFileInput = document.getElementById('hwinfo-file-input');
+  const fileStatusBadge = document.getElementById('file-status-badge');
 
   // Results elements
   const resultsCard = document.getElementById('results-card');
@@ -83,7 +86,137 @@ document.addEventListener('DOMContentLoaded', () => {
     symptomInput.value = '';
     resultsCard.style.display = 'none';
     currentReport = null;
+    fileStatusBadge.style.display = 'none';
+    fileStatusBadge.innerHTML = '';
   });
+
+  // 3b. HWiNFO File Upload & Parser
+  uploadHwinfoBtn.addEventListener('click', () => {
+    hwinfoFileInput.click();
+  });
+
+  hwinfoFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    handleHWiNFOFile(file);
+    hwinfoFileInput.value = '';
+  });
+
+  // Support drag-and-drop on the textarea
+  symptomInput.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    symptomInput.style.borderColor = 'var(--accent-cyan)';
+  });
+
+  symptomInput.addEventListener('dragleave', () => {
+    symptomInput.style.borderColor = '';
+  });
+
+  symptomInput.addEventListener('drop', (e) => {
+    e.preventDefault();
+    symptomInput.style.borderColor = '';
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleHWiNFOFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  function handleHWiNFOFile(file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target.result;
+      const parsed = parseHWiNFOLog(content, file.name);
+      symptomInput.value = parsed.diagnosticText;
+      symptomInput.focus();
+
+      fileStatusBadge.style.display = 'flex';
+      fileStatusBadge.innerHTML = `<span>✓ Parsed <strong>${escapeHtml(file.name)}</strong>: ${escapeHtml(parsed.highlights)}</span>`;
+    };
+    reader.onerror = () => {
+      alert(`Could not read file: ${file.name}`);
+    };
+    reader.readAsText(file);
+  }
+
+  function parseHWiNFOLog(content, filename) {
+    const lines = content.split(/\r?\n/);
+    const metrics = {};
+    let hardwareSummary = '';
+
+    for (let line of lines) {
+      line = line.trim();
+      if (!line) continue;
+
+      if (line.startsWith('System:') || line.startsWith('Computer:')) {
+        hardwareSummary = line;
+      }
+
+      // Check CSV or comma/tab separated
+      const parts = line.split(/[,\t]+/).map(p => p.trim());
+      const sensorName = parts[0];
+
+      // CPU Temp
+      if (/CPU Package.*\[°C\]/i.test(sensorName) || /CPU Package Temperature/i.test(sensorName)) {
+        metrics.cpuPackageTemp = parts[1] || parts[parts.length - 1];
+        if (parts[3]) metrics.cpuPackageMax = parts[3];
+      }
+      // Core Thermal Throttling
+      if (/Core Thermal Throttling/i.test(sensorName)) {
+        metrics.throttling = parts[1] || parts[parts.length - 1];
+      }
+      // PROCHOT / Power limit
+      if (/PROCHOT|Power Limit/i.test(sensorName)) {
+        metrics.prochot = parts[1] || parts[parts.length - 1];
+      }
+      // CPU Fan
+      if (/CPU Fan.*\[RPM\]/i.test(sensorName) || /CPU Fan Speed/i.test(sensorName)) {
+        metrics.cpuFanRpm = parts[1] || parts[parts.length - 1];
+      }
+      // GPU Temp
+      if (/GPU Temperature.*\[°C\]/i.test(sensorName)) {
+        metrics.gpuTemp = parts[1] || parts[parts.length - 1];
+      }
+      // GPU Hot Spot
+      if (/GPU Hot.*Spot.*\[°C\]/i.test(sensorName)) {
+        metrics.gpuHotspot = parts[1] || parts[parts.length - 1];
+      }
+      // Battery Wear
+      if (/Battery Wear.*\[%\]/i.test(sensorName)) {
+        metrics.batteryWear = parts[1] || parts[parts.length - 1];
+      }
+      // Drive Temp
+      if (/Drive Temperature.*\[°C\]/i.test(sensorName)) {
+        metrics.driveTemp = parts[1] || parts[parts.length - 1];
+      }
+    }
+
+    // Build concise natural-language telemetry description for Kyūmei LLM
+    const items = [];
+    if (hardwareSummary) items.push(hardwareSummary);
+    if (metrics.cpuPackageTemp) items.push(`CPU Package Temperature: ${metrics.cpuPackageTemp}°C${metrics.cpuPackageMax ? ` (Max: ${metrics.cpuPackageMax}°C)` : ''}`);
+    if (metrics.throttling) items.push(`CPU Core Thermal Throttling: ${metrics.throttling}`);
+    if (metrics.prochot) items.push(`CPU Power Limit / PROCHOT Reason: ${metrics.prochot}`);
+    if (metrics.cpuFanRpm) items.push(`CPU Fan Speed: ${metrics.cpuFanRpm} RPM`);
+    if (metrics.gpuTemp) items.push(`GPU Temperature: ${metrics.gpuTemp}°C${metrics.gpuHotspot ? ` (Hotspot: ${metrics.gpuHotspot}°C)` : ''}`);
+    if (metrics.batteryWear) items.push(`Battery Wear Level: ${metrics.batteryWear}%`);
+    if (metrics.driveTemp) items.push(`Storage Drive Temp: ${metrics.driveTemp}°C`);
+
+    let diagnosticText = '';
+    if (items.length > 0) {
+      diagnosticText = `HWiNFO64 Telemetry Log Analysis [${filename}]:\n` + items.join(', ') + '.';
+    } else {
+      // Fallback: take first 800 characters of file
+      diagnosticText = `HWiNFO64 Log Content [${filename}]:\n` + content.slice(0, 800);
+    }
+
+    const highlights = [
+      metrics.cpuPackageTemp ? `CPU ${metrics.cpuPackageTemp}°C` : null,
+      metrics.throttling && metrics.throttling.toLowerCase() === 'yes' ? 'Thermal Throttling: YES' : null,
+      metrics.cpuFanRpm ? `Fan ${metrics.cpuFanRpm} RPM` : null,
+      metrics.gpuTemp ? `GPU ${metrics.gpuTemp}°C` : null
+    ].filter(Boolean).join(' | ') || 'Telemetry extracted';
+
+    return { diagnosticText, highlights };
+  }
 
   // 4. Copy JSON Report
   copyJsonBtn.addEventListener('click', async () => {
