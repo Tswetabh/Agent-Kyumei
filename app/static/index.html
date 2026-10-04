@@ -36,33 +36,145 @@
 
     <!-- Main Workspace -->
     <main class="workspace">
+      <!-- Navigation Tabs -->
+      <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-faults">
+          <span class="tab-icon">🔧</span> Hardware Faults
+        </button>
+        <button class="tab-btn" data-tab="tab-hwinfo">
+          <span class="tab-icon">📊</span> HWiNFO64 Telemetry
+        </button>
+        <button class="tab-btn" data-tab="tab-workload">
+          <span class="tab-icon">🎮</span> Game & AI "Can It Run?"
+        </button>
+        <button class="tab-btn" data-tab="tab-rogue">
+          <span class="tab-icon">⚡</span> Rogue Process Triage
+        </button>
+      </nav>
+
       <!-- Input Panel -->
       <section class="card input-card">
-        <div class="card-header">
-          <h2>Device Symptom Description</h2>
-          <span class="hint">Input plain-text hardware behavior, noises, or thermal events</span>
+        
+        <!-- Tab 1: Hardware Faults -->
+        <div class="tab-pane active" id="tab-faults">
+          <div class="pane-header">
+            <h2>Device Symptom Description</h2>
+            <span class="hint">Input plain-text hardware behavior, noises, or thermal events</span>
+          </div>
+
+          <div class="presets-bar">
+            <span class="preset-label">Hardware Presets:</span>
+            <div class="preset-chips">
+              <button class="preset-chip" data-preset="thermal_laptop">Overheating at Idle</button>
+              <button class="preset-chip" data-preset="gpu_artifacts">GPU Artifacts & Freeze</button>
+              <button class="preset-chip" data-preset="swollen_battery">Swollen Battery Hazard</button>
+              <button class="preset-chip" data-preset="vague_wont_start">Ambiguous "Won't Turn On"</button>
+            </div>
+          </div>
         </div>
 
-        <!-- Quick Preset Case Chips & Log Upload -->
-        <div class="presets-bar">
-          <span class="preset-label">Quick Test Scenarios:</span>
-          <div class="preset-chips" id="preset-chips">
-            <!-- Dynamically populated from /api/examples -->
+        <!-- Tab 2: HWiNFO64 Telemetry -->
+        <div class="tab-pane" id="tab-hwinfo">
+          <div class="pane-header">
+            <h2>HWiNFO64 Sensor Log Analyzer</h2>
+            <span class="hint">Upload or drop .txt/.csv sensor logs to parse live hardware telemetry</span>
           </div>
-          <div class="upload-action">
-            <input type="file" id="hwinfo-file-input" accept=".txt,.csv,.log" style="display: none;">
-            <button type="button" id="upload-hwinfo-btn" class="btn btn-sm btn-outline btn-hwinfo" title="Upload HWiNFO64 sensor log (.txt or .csv) to auto-extract telemetry">
-              📁 Upload HWiNFO Log (.txt)
-            </button>
+
+          <div class="dropzone-area" id="dropzone">
+            <div class="dropzone-icon">📁</div>
+            <div class="dropzone-text">
+              <p><strong>Drag & Drop HWiNFO64 Log (.txt / .csv)</strong></p>
+              <p class="dropzone-sub">or click to browse from your device</p>
+            </div>
+            <div class="dropzone-actions">
+              <input type="file" id="hwinfo-file-input" accept=".txt,.csv,.log" style="display: none;">
+              <button type="button" id="browse-hwinfo-btn" class="btn btn-sm btn-outline">Browse Log File</button>
+              <button type="button" id="load-sample-hwinfo-btn" class="btn btn-sm btn-outline btn-hwinfo">Load Sample HWiNFO Log</button>
+            </div>
+          </div>
+
+          <!-- Live Metrics Grid Preview -->
+          <div class="metrics-grid" id="metrics-grid" style="display: none;">
+            <div class="metric-card">
+              <div class="metric-label">CPU Package Temp</div>
+              <div class="metric-value" id="m-cpu-temp">--</div>
+              <div class="metric-sub" id="m-cpu-throttling">Throttling: --</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Fan Speeds</div>
+              <div class="metric-value" id="m-fans">--</div>
+              <div class="metric-sub">Cooling RPM</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">GPU Temperature</div>
+              <div class="metric-value" id="m-gpu-temp">--</div>
+              <div class="metric-sub" id="m-gpu-hotspot">Hotspot: --</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Battery Wear Level</div>
+              <div class="metric-value" id="m-battery-wear">--</div>
+              <div class="metric-sub">Health Status</div>
+            </div>
           </div>
         </div>
 
+        <!-- Tab 3: Game & AI Workload Compatibility -->
+        <div class="tab-pane" id="tab-workload">
+          <div class="pane-header">
+            <h2>Game & Local AI "Can It Run?" Feasibility</h2>
+            <span class="hint">Diagnose hardware limits, VRAM bottlenecks, and optimal settings</span>
+          </div>
+
+          <div class="presets-bar">
+            <span class="preset-label">Workload Presets:</span>
+            <div class="preset-chips">
+              <button class="preset-chip" data-preset="workload_cyberpunk">Cyberpunk 2077 (RTX 3050)</button>
+              <button class="preset-chip" data-preset="workload_deepseek">DeepSeek-R1-14B in Ollama</button>
+              <button class="preset-chip" data-preset="workload_wukong">Black Myth: Wukong</button>
+              <button class="preset-chip" data-preset="workload_llama">Llama-3.1-8B Full GPU</button>
+            </div>
+          </div>
+
+          <div class="workload-builder-grid">
+            <div class="form-group">
+              <label for="wl-target">Target Workload (Game or Model):</label>
+              <input type="text" id="wl-target" class="form-control" placeholder="e.g. Cyberpunk 2077 or DeepSeek-R1-14B">
+            </div>
+            <div class="form-group">
+              <label for="wl-settings">Target Resolution / Precision:</label>
+              <input type="text" id="wl-settings" class="form-control" placeholder="e.g. 1080p Medium with DLSS Quality or Q4_K_M">
+            </div>
+            <div class="form-group full-width">
+              <label for="wl-hardware">Detected Hardware Rig:</label>
+              <input type="text" id="wl-hardware" class="form-control" value="RTX 3050 6GB VRAM, 16GB RAM, Intel Core i7-11800H">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Rogue Process & Mining Triage -->
+        <div class="tab-pane" id="tab-rogue">
+          <div class="pane-header">
+            <h2>Rogue Compute & Mining Process Triage</h2>
+            <span class="hint">Diagnose unexpected 100% GPU/CPU compute loads and screaming fans at idle</span>
+          </div>
+
+          <div class="presets-bar">
+            <span class="preset-label">Rogue Scenarios:</span>
+            <div class="preset-chips">
+              <button class="preset-chip" data-preset="rogue_gpu_idle">100% GPU at Idle after download</button>
+              <button class="preset-chip" data-preset="rogue_fans_loud">Screaming Fans with no apps open</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shared Text Input Console -->
         <div id="file-status-badge" class="file-status-badge" style="display: none;"></div>
 
         <div class="input-wrapper">
+          <label for="symptom-input" class="textarea-label">Diagnostic Telemetry / Symptom Prompt:</label>
           <textarea 
             id="symptom-input" 
-            placeholder="Describe the hardware problem in detail (e.g. 'Laptop gets very hot on the bottom and fan is loud while idle, shutting down after 20 minutes')..."
+            placeholder="Describe the hardware problem or select a preset / upload a log above..."
             rows="4"
           ></textarea>
         </div>
@@ -114,7 +226,7 @@
           <div class="needs-info-icon">❓</div>
           <div class="needs-info-body">
             <h3>Insufficient Evidence — Diagnostic Questions</h3>
-            <p>The symptom is ambiguous. Answering these targeted questions will isolate root causes:</p>
+            <p>The symptom is ambiguous. Click <strong>Answer ↵</strong> on any question to refine the diagnosis:</p>
             <ul id="follow-up-list" class="follow-up-list"></ul>
           </div>
         </div>
