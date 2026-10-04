@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     kyumei_request_timeout: float = 120.0  # seconds
     
     # HTTP server configuration
-    kyumei_host: str = "127.0.0.1"
-    kyumei_port: int = 8000
+    kyumei_host: str = os.environ.get("HOST", "0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
+    kyumei_port: int = int(os.environ.get("PORT", "8000"))
     
     # Project Paths
     base_dir: Path = Path(__file__).resolve().parent.parent
