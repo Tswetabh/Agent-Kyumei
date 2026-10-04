@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -14,6 +15,10 @@ class Settings(BaseSettings):
     # Inference parameters
     kyumei_temperature: float = 0.2
     kyumei_request_timeout: float = 120.0  # seconds
+    
+    # OpenRouter Cloud Inference (Optional)
+    openrouter_api_key: Optional[str] = None
+    openrouter_model: str = "google/gemma-2-9b-it"
     
     # HTTP server configuration
     kyumei_host: str = os.environ.get("HOST", "0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
