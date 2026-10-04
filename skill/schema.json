@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KyumeiDiagnosticReport",
+  "description": "Standardized schema for Kyūmei hardware diagnostic reasoning output",
+  "type": "object",
+  "required": [
+    "status",
+    "symptom_summary",
+    "evidence",
+    "possible_causes",
+    "troubleshooting_steps"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "needs_more_info", "safety_alert"],
+      "description": "Diagnostic resolution status"
+    },
+    "symptom_summary": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Summary of the device problem"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^E[0-9]+$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Atomic facts and direct quotes extracted from user prompt"
+    },
+    "possible_causes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "cause", "evidence_ids", "confidence", "verification"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^C[0-9]+$"
+          },
+          "cause": {
+            "type": "string",
+            "minLength": 5
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^E[0-9]+$"
+            },
+            "minItems": 1
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          },
+          "verification": {
+            "type": "string",
+            "minLength": 5
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Identified potential root causes with linked evidence"
+    },
+    "troubleshooting_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step_number", "action", "rationale", "risk_level"],
+        "properties": {
+          "step_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "type": "string",
+            "minLength": 5
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 5
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": ["none", "low", "medium", "high"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Ordered safest-first remediation sequence"
+    },
+    "safety_warning": {
+      "type": ["string", "null"],
+      "description": "Advisory text for physical dangers (batteries, smoke, mains voltage)"
+    },
+    "follow_up_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Targeted questions when status is needs_more_info"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,23 @@
+# AI Tools Usage & Disclosure Statement
+
+This document provides a transparent, auditable disclosure of the AI tools utilized in the creation of **Kyūmei (究明)** for the Hacktoberfest Hack Day Indore (PyData Indore × MLH) hackathon.
+
+## Summary of Roles
+- **Human Author / Architect**: Project concept, diagnostic reasoning axioms, Agent Skill design, prompt engineering, safety constraint definitions, manual model evaluation on local hardware (RTX 3050), and end-to-end testing.
+- **AI Assistant (Google Antigravity / Gemini)**: Assisted with scaffolding, boilerplate generation, fast prototyping, and documentation formatting as directed by the human author.
+
+---
+
+## Running Inventory of AI-Generated Scaffolding & Code
+
+### Phase 1: Specifications & Agent Skill
+- `LICENSE`: Standard MIT license template.
+- `.gitignore`: Standard Python / Windows development ignore rules.
+- `.env.example`: Configuration template for local Ollama endpoints and model parameters.
+- `skill/schema.json`: Formal JSON Schema draft 2020-12 representing Kyūmei's structured diagnostic report.
+- `skill/SKILL.md`: Initial scaffolding of the Agent Skill markdown structure following the Agent Skill Open Standard.
+- `skill/references/worked_overheating.md`: Scaffolding for few-shot worked example of thermal throttling.
+- `skill/references/worked_vague.md`: Scaffolding for few-shot worked example of ambiguous input triage.
+- `skill/references/fault_checklist.md`: Hardware failure taxonomy and safety risk categories.
+
+*(This log is updated iteratively as subsequent phases are implemented.)*
