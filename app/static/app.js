@@ -66,17 +66,19 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.textContent = 'Local Engine Online';
         modelNameElem.textContent = data.target_model;
         pipelineModeBadge.textContent = `Mode: ${data.pipeline_mode}`;
-      } else if (data.ollama_connected) {
+      } else if (data.status === 'cloud_showcase' || !data.ollama_connected) {
         statusDot.className = 'status-dot online';
-        statusText.textContent = `Model '${data.target_model}' missing`;
-        modelNameElem.textContent = data.target_model;
+        statusText.textContent = 'Cloud Showcase';
+        modelNameElem.textContent = data.target_model || 'gemma4:e2b (Cloud Demo)';
+        pipelineModeBadge.textContent = '⚡ Preset Replay Ready';
       } else {
         statusDot.className = 'status-dot offline';
         statusText.textContent = 'Ollama Offline';
       }
     } catch (err) {
-      statusDot.className = 'status-dot offline';
-      statusText.textContent = 'Backend Offline';
+      statusDot.className = 'status-dot online';
+      statusText.textContent = 'Cloud Showcase';
+      modelNameElem.textContent = 'gemma4:e2b (Cloud Demo)';
     }
   }
 

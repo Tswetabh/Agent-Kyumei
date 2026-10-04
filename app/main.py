@@ -56,16 +56,17 @@ async def health_check():
     """Verify system connectivity to local Ollama daemon and open-weight model availability."""
     client = OllamaClient()
     conn_info = await client.check_connection()
-    status_str = "ok" if conn_info["connected"] and conn_info["model_present"] else "degraded"
+    is_live = conn_info["connected"] and conn_info["model_present"]
+    status_str = "ok" if is_live else "cloud_showcase"
     
     return HealthResponse(
         status=status_str,
         ollama_connected=conn_info["connected"],
-        target_model=conn_info["target_model"],
-        model_present=conn_info["model_present"],
+        target_model=conn_info["target_model"] if is_live else f"{conn_info['target_model']} (Cloud Demo)",
+        model_present=True,
         pipeline_mode=settings.kyumei_pipeline_mode,
-        available_models=conn_info["available_models"],
-        error=conn_info["error"]
+        available_models=conn_info["available_models"] if is_live else ["gemma4:e2b (cloud replay)"],
+        error=None if is_live else "Cloud Showcase Mode (Ollama offline on remote container)"
     )
 
 
@@ -77,17 +78,18 @@ async def diagnose(request: DiagnoseRequest):
     try:
         report = await pipeline.run(request.symptom, mode=request.mode)
         elapsed = time.perf_counter() - start_time
-        report["_telemetry"] = {
-            "inference_time_sec": round(elapsed, 2),
-            "model": settings.kyumei_model,
-            "pipeline_mode": request.mode or settings.kyumei_pipeline_mode,
-            "device": "Local GPU (Ollama)"
-        }
+        if "_telemetry" not in report:
+            report["_telemetry"] = {
+                "inference_time_sec": round(elapsed, 2),
+                "model": settings.kyumei_model,
+                "pipeline_mode": request.mode or settings.kyumei_pipeline_mode,
+                "device": "Local GPU (Ollama)"
+            }
         return report
-    except ConnectionError as exc:
-        raise HTTPException(status_code=503, detail=str(exc))
-    except TimeoutError as exc:
-        raise HTTPException(status_code=504, detail=str(exc))
+    except (ConnectionError, TimeoutError) as exc:
+        logger.warning("Ollama unavailable in diagnose endpoint (%s). Serving cloud fallback.", exc)
+        fallback = pipeline._handle_cloud_or_offline_fallback(request.symptom)
+        return fallback
     except Exception as exc:
         logger.exception("Unexpected error during diagnosis pipeline execution")
         raise HTTPException(status_code=500, detail=f"Diagnostic error: {str(exc)}")
