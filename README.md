@@ -110,7 +110,7 @@ Default parameters in `.env`:
 - `KYUMEI_PIPELINE_MODE=single` (or `staged`)
 - `KYUMEI_TEMPERATURE=0.2`
 
-### Step 4: Run the Application
+### Step 4: Run the Application (Web Interface)
 Start the FastAPI server:
 ```bash
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
@@ -120,17 +120,40 @@ Open your browser to:
 http://127.0.0.1:8000
 ```
 
+### Alternative: Run via Standalone Terminal CLI
+Kyūmei includes a headless command-line interface:
+```bash
+# Diagnose symptom text:
+python -m app.cli "Laptop fan sounds like a jet engine and shuts down after 20 minutes"
+
+# Diagnose directly from an HWiNFO sensor log:
+python -m app.cli --file examples/hwinfo_thermal_throttle.txt
+
+# Output raw JSON:
+python -m app.cli "My computer is completely dead and won't turn on" --json
+```
+
 ---
 
-## 5. UI Walkthrough & Screenshot
+## 5. UI Walkthrough & Features
 
 *(TODO: Insert screenshot of the Kyūmei diagnostic dashboard running locally)*
 
 ### Interactive Features:
 - **Bi-Directional Cross-Highlighting**: Hover over any extracted Evidence badge (`E1`) to instantly highlight which candidate causes rely on it. Hover over any Cause (`C1`) to highlight its supporting evidence in the text.
-- **1-Click Challenge Presets**: Quickly load test scenarios (Thermal Throttling, GPU Artifacting, Swollen Battery Safety Hazard, Ambiguous Won't Turn On).
-- **Live Local Telemetry**: Displays connected status to local Ollama daemon and confirms offline operation.
-- **Copy JSON**: One-click export of structured diagnostic JSON.
+- **Client-Side HWiNFO Log Upload**: Upload or drag-and-drop raw HWiNFO64 `.txt` logs. The browser distills sensor telemetry (temps, throttling flags, fan RPM, battery wear) 100% offline.
+- **Real-Time Inference Telemetry**: Displays verifiable local inference execution time: `⚡ Inferred in 2.9s | Local GPU (Ollama)`.
+- **1-Click Challenge Presets**:
+  1. *Thermal Throttling at Idle*
+  2. *GPU Artifacting & Display Freezing*
+  3. *Trackpad Lifting / Swollen Battery Safety Hazard*
+  4. *Ambiguous Won't Turn On (`needs_more_info`)*
+  5. *HWiNFO64 Sensor Log Telemetry*
+  6. *Can It Run: Cyberpunk 2077 (RTX 3050 6GB)*
+  7. *Can It Run: DeepSeek-R1-14B Locally (Ollama)*
+  8. *Rogue Process / Mining Triage: 100% GPU at Idle*
+- **Click-to-Answer Follow-Up Questions**: For ambiguous symptoms, clicking any follow-up question lets you refine the diagnosis in 1 click.
+- **Export Options**: One-click **Copy JSON** and **Export Report (.md)** for hardware repair tickets.
 
 ---
 
@@ -142,7 +165,7 @@ python -m pytest tests/test_schema_and_guardrails.py -v
 ```
 
 ### Run Live Model Example Suite
-Runs all 4 real-world test cases through the local model pipeline, validating schema conformance and evidence-linking invariants:
+Runs all benchmark test cases through the local model pipeline, validating schema conformance and evidence-linking invariants:
 ```bash
 python tests/run_examples.py
 ```

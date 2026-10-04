@@ -1,0 +1,66 @@
+{
+  "id": "06_game_cyberpunk",
+  "title": "Can It Run: Cyberpunk 2077 (RTX 3050 6GB)",
+  "category": "Gaming & Workload Compatibility",
+  "symptom": "Can my laptop with RTX 3050 6GB VRAM, 16GB RAM, and Intel i7-11800H run Cyberpunk 2077 at 1080p Medium settings with DLSS Quality and no ray tracing? What performance bottlenecks should I expect?",
+  "expected_output": {
+    "status": "ok",
+    "symptom_summary": "Hardware feasibility evaluation for running Cyberpunk 2077 at 1080p Medium with DLSS Quality on an RTX 3050 (6GB) and Intel i7-11800H.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "RTX 3050 6GB VRAM"
+      },
+      {
+        "id": "E2",
+        "text": "16GB RAM"
+      },
+      {
+        "id": "E3",
+        "text": "Intel i7-11800H"
+      },
+      {
+        "id": "E4",
+        "text": "Cyberpunk 2077 at 1080p Medium settings with DLSS Quality"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "VRAM buffer ceiling constraint (6GB) limiting texture pool headroom during high-density scene transitions.",
+        "evidence_ids": ["E1", "E4"],
+        "confidence": "high",
+        "verification": "Monitor VRAM allocation with MSI Afterburner / RTSS; verify memory usage stays below 5.6GB to avoid swap stutters."
+      },
+      {
+        "id": "C2",
+        "cause": "Laptop thermal dissipation limit causing GPU clock down-throttling during prolonged 3D gaming sessions.",
+        "evidence_ids": ["E1", "E3"],
+        "confidence": "medium",
+        "verification": "Log GPU core temperatures to verify whether GPU reaches NVIDIA throttle point (>86°C)."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Ensure NVIDIA DLSS is set to 'Balanced' or 'Quality' and keep Screen Space Reflections at Medium.",
+        "rationale": "Reduces internal rendering resolution from 1080p to 720p/540p, staying safely within the 6GB VRAM budget.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 2,
+        "action": "Cap frame rate at 60 FPS in NVIDIA Control Panel.",
+        "rationale": "Prevents GPU power spikes and minimizes thermal throttling on laptop cooling systems.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 3,
+        "action": "Disable Ray Tracing completely.",
+        "rationale": "Ray tracing BVH acceleration structures require 2GB+ additional VRAM and will instantly overwhelm a 6GB card.",
+        "risk_level": "none"
+      }
+    ],
+    "safety_warning": null,
+    "follow_up_questions": []
+  }
+}

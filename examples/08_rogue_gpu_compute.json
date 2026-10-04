@@ -1,0 +1,68 @@
+{
+  "id": "08_rogue_gpu_compute",
+  "title": "Rogue Process / Mining Triage: 100% GPU at Idle",
+  "category": "Thermal & Process Triage",
+  "symptom": "My laptop fans are screaming at maximum speed and GPU usage is pinned at 99% according to Task Manager, even though I am sitting idle on the desktop with no games open after downloading a file.",
+  "expected_output": {
+    "status": "ok",
+    "symptom_summary": "GPU experiences unexpected 99% compute utilization and maximum fan RPM during idle desktop state following a recent file download.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "fans are screaming at maximum speed"
+      },
+      {
+        "id": "E2",
+        "text": "GPU usage is pinned at 99% according to Task Manager"
+      },
+      {
+        "id": "E3",
+        "text": "sitting idle on the desktop with no games open after downloading a file"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "Unauthorized background compute payload (such as a stealth cryptocurrency miner or CUDA compute process) masquerading as a system service.",
+        "evidence_ids": ["E2", "E3"],
+        "confidence": "high",
+        "verification": "Open Task Manager Processes tab, sort by GPU engine column, and check command line parameters for suspicious executables in AppData/Temp."
+      },
+      {
+        "id": "C2",
+        "cause": "Corrupted graphics driver state causing the GPU power state (P-State) to lock at full 3D clocks (P0) without downclocking.",
+        "evidence_ids": ["E1", "E2"],
+        "confidence": "medium",
+        "verification": "Check GPU core clock in GPU-Z or HWiNFO; verify if clock drops after pressing Win+Ctrl+Shift+B to reset the display driver."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Open Windows Task Manager (Ctrl+Shift+Esc), navigate to Details tab, right click columns and enable 'GPU', then sort descending to identify the exact PID consuming the GPU.",
+        "rationale": "Directly identifies the specific executable process causing the compute load.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 2,
+        "action": "Right-click the suspicious high-GPU process and select 'Open file location' before terminating it.",
+        "rationale": "Locates the file path (often hidden in `%APPDATA%` or `%TEMP%`) to prevent automatic persistence on reboot.",
+        "risk_level": "low"
+      },
+      {
+        "step_number": 3,
+        "action": "Disconnect Wi-Fi / Ethernet temporarily and observe if GPU usage immediately drops to 0%.",
+        "rationale": "Unauthorized mining malware often terminates or idles when network communication with the mining pool is cut.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 4,
+        "action": "Run a full scan with Windows Defender Offline to purge any scheduled startup persistence tasks.",
+        "rationale": "Ensures registry Run keys and Scheduled Tasks are remediated safely.",
+        "risk_level": "none"
+      }
+    ],
+    "safety_warning": null,
+    "follow_up_questions": []
+  }
+}

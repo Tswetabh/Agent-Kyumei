@@ -391,11 +391,30 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Results Elements */
 .results-title-group {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+.telemetry-pill {
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+  background-color: var(--accent-cyan-bg);
+  border: 1px solid var(--accent-cyan-border);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.results-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .status-pill {
@@ -487,6 +506,33 @@ body {
 
 .follow-up-list li {
   margin-bottom: 4px;
+}
+
+.follow-up-list li.interactive-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(245, 158, 11, 0.2);
+}
+
+.follow-up-list li.interactive-question:last-child {
+  border-bottom: none;
+}
+
+.btn-answer {
+  color: var(--accent-amber);
+  border-color: rgba(245, 158, 11, 0.4);
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+
+.btn-answer:hover {
+  background-color: rgba(245, 158, 11, 0.2);
+  border-color: var(--accent-amber);
+  color: #fff;
 }
 
 /* Section Blocks */

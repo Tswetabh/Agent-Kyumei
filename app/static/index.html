@@ -92,8 +92,12 @@
           <div class="results-title-group">
             <h2>Diagnostic Report</h2>
             <div id="status-pill" class="status-pill"></div>
+            <div id="inference-telemetry-badge" class="telemetry-pill" style="display: none;"></div>
           </div>
-          <button id="copy-json-btn" class="btn btn-sm btn-outline">Copy JSON</button>
+          <div class="results-actions">
+            <button id="export-md-btn" class="btn btn-sm btn-outline">📄 Export Report (.md)</button>
+            <button id="copy-json-btn" class="btn btn-sm btn-outline">Copy JSON</button>
+          </div>
         </div>
 
         <!-- Safety Alert Callout (Conditional) -->

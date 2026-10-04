@@ -72,8 +72,17 @@ async def health_check():
 @app.post("/api/diagnose")
 async def diagnose(request: DiagnoseRequest):
     """Run hardware diagnostic reasoning pipeline."""
+    import time
+    start_time = time.perf_counter()
     try:
         report = await pipeline.run(request.symptom, mode=request.mode)
+        elapsed = time.perf_counter() - start_time
+        report["_telemetry"] = {
+            "inference_time_sec": round(elapsed, 2),
+            "model": settings.kyumei_model,
+            "pipeline_mode": request.mode or settings.kyumei_pipeline_mode,
+            "device": "Local GPU (Ollama)"
+        }
         return report
     except ConnectionError as exc:
         raise HTTPException(status_code=503, detail=str(exc))

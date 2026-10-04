@@ -1,0 +1,62 @@
+{
+  "id": "07_ai_model_ollama",
+  "title": "Can It Run: DeepSeek-R1-14B Locally (Ollama)",
+  "category": "Gaming & Workload Compatibility",
+  "symptom": "Can my laptop with RTX 3050 6GB VRAM, 16GB System RAM, and Intel i7-11800H run DeepSeek-R1-14B or Llama-3-8B locally via Ollama? What quantization and layer offload limits should I expect?",
+  "expected_output": {
+    "status": "ok",
+    "symptom_summary": "Feasibility analysis for deploying 8B and 14B parameter LLMs locally via Ollama on an RTX 3050 (6GB VRAM) and 16GB system RAM.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "RTX 3050 6GB VRAM"
+      },
+      {
+        "id": "E2",
+        "text": "16GB System RAM"
+      },
+      {
+        "id": "E3",
+        "text": "DeepSeek-R1-14B or Llama-3-8B locally via Ollama"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "Hardware VRAM boundary (6GB) is insufficient to fit a 14B model fully into GPU memory (which requires ~9GB in 4-bit Q4_K_M).",
+        "evidence_ids": ["E1", "E3"],
+        "confidence": "high",
+        "verification": "Check Ollama model size with 'ollama show deepseek-r1:14b'; verify weight footprint exceeds 6GB VRAM."
+      },
+      {
+        "id": "C2",
+        "cause": "PCIe bus bandwidth bottleneck during partial GPU offloading when layers spill over into system DDR4/DDR5 RAM.",
+        "evidence_ids": ["E1", "E2"],
+        "confidence": "high",
+        "verification": "Compare tokens/sec between full GPU offload (Llama-3-8B) vs partial CPU RAM offload (14B model)."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Run 7B/8B models (such as Llama-3.1-8B-Instruct or Gemma-2-9B) using Q4_K_M quantization for 100% GPU VRAM execution.",
+        "rationale": "An 8B Q4 model consumes ~4.8GB VRAM, leaving ~1.2GB for Windows DWM and context KV cache.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 2,
+        "action": "For DeepSeek-R1-14B, configure Ollama layer offloading with ~24 layers on GPU and remaining on CPU RAM.",
+        "rationale": "Allows the model to execute without CUDA Out of Memory errors, with acceptable ~8-12 tokens/sec speed.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 3,
+        "action": "Ensure no other GPU-intensive 3D apps or browser hardware-accelerated tabs are running during inference.",
+        "rationale": "Frees the maximum contiguous VRAM pool on the 6GB device.",
+        "risk_level": "none"
+      }
+    ],
+    "safety_warning": null,
+    "follow_up_questions": []
+  }
+}
