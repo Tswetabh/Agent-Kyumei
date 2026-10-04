@@ -1,0 +1,62 @@
+{
+  "id": "02_gpu_artifacting",
+  "title": "GPU Artifacting & Display Crash",
+  "category": "Display & Graphics",
+  "symptom": "When launching 3D games, the screen displays green checkerboard artifacts and pink lines, followed by a display freeze and black screen.",
+  "expected_output": {
+    "status": "ok",
+    "symptom_summary": "Display renders visual checkerboard patterns and crashes to black under 3D graphical workloads.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "When launching 3D games"
+      },
+      {
+        "id": "E2",
+        "text": "displays green checkerboard artifacts and pink lines"
+      },
+      {
+        "id": "E3",
+        "text": "display freeze and black screen"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "Defective Video RAM (VRAM) memory modules or solder joint degradation under thermal expansion.",
+        "evidence_ids": ["E1", "E2"],
+        "confidence": "high",
+        "verification": "Run a memory-specific GPU diagnostic (such as MATS/MODS or OCCT VRAM test) to detect memory address errors."
+      },
+      {
+        "id": "C2",
+        "cause": "Corrupted graphics card driver state triggering Windows TDR (Timeout Detection and Recovery) resets.",
+        "evidence_ids": ["E1", "E3"],
+        "confidence": "medium",
+        "verification": "Check Event Viewer for nvlddmkm or amdkmdag Event ID 4101 indicating driver timeout."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Perform a clean driver reinstall using Display Driver Uninstaller (DDU) in Windows Safe Mode.",
+        "rationale": "Safely eliminates corrupted registry entries or driver cache before assuming silicon failure.",
+        "risk_level": "low"
+      },
+      {
+        "step_number": 2,
+        "action": "Lower GPU core and VRAM clock speeds by 100 MHz using vendor utility (e.g. MSI Afterburner).",
+        "rationale": "Tests whether marginal memory stability can be mitigated at lower frequencies.",
+        "risk_level": "low"
+      },
+      {
+        "step_number": 3,
+        "action": "Reseat graphics card in PCIe slot and verify PCIe power connectors are firmly latched.",
+        "rationale": "Rules out power delivery instability or slot contact corrosion.",
+        "risk_level": "low"
+      }
+    ],
+    "safety_warning": null,
+    "follow_up_questions": []
+  }
+}

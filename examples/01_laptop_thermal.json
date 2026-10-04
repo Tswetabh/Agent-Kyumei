@@ -1,0 +1,62 @@
+{
+  "id": "01_laptop_thermal",
+  "title": "Laptop Thermal Throttling at Idle",
+  "category": "Thermal & Cooling",
+  "symptom": "Laptop gets very hot on the bottom and fan is loud while idle, shutting down abruptly after 20 minutes of light use.",
+  "expected_output": {
+    "status": "ok",
+    "symptom_summary": "Laptop exhibits extreme heat dissipation failure and high fan RPM during low-load idle, causing automatic thermal shutdowns.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "Laptop gets very hot on the bottom"
+      },
+      {
+        "id": "E2",
+        "text": "fan is loud while idle"
+      },
+      {
+        "id": "E3",
+        "text": "shutting down abruptly after 20 minutes"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "Heatsink fins clogged with compacted dust or lint, preventing thermal dissipation.",
+        "evidence_ids": ["E1", "E2"],
+        "confidence": "high",
+        "verification": "Inspect heatsink exhaust vents with illumination to verify dust blanket."
+      },
+      {
+        "id": "C2",
+        "cause": "Degraded thermal compound on CPU/GPU die causing high thermal barrier.",
+        "evidence_ids": ["E1", "E2", "E3"],
+        "confidence": "high",
+        "verification": "Log thermal sensors; observe core temperatures jumping to 95°C+ instantly under mild loads."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Ensure laptop is operated on a hard, flat surface with cleared intake vents.",
+        "rationale": "Rules out simple airflow smothering from soft bedding or cloth surfaces.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 2,
+        "action": "Blow short bursts of compressed air into the exhaust vents while powered down.",
+        "rationale": "Dislodges superficial dust clumps without opening the chassis.",
+        "risk_level": "low"
+      },
+      {
+        "step_number": 3,
+        "action": "Check OS Task Manager for background processes consuming CPU cycles.",
+        "rationale": "Eliminates rogue malware or crypto-miner software spikes.",
+        "risk_level": "none"
+      }
+    ],
+    "safety_warning": null,
+    "follow_up_questions": []
+  }
+}

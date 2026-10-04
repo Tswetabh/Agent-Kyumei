@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kyūmei (究明) — Local Open-Weight Hardware Diagnostics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header & System Telemetry -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-badge">究明</div>
+        <div>
+          <h1>Kyūmei <span class="tag">v0.1.0</span></h1>
+          <p class="subtitle">Evidence-Grounded Hardware & Device Diagnostic Reasoning</p>
+        </div>
+      </div>
+      
+      <div class="system-status-card" id="system-status-card">
+        <div class="status-indicator">
+          <span class="status-dot" id="status-dot"></span>
+          <span class="status-text" id="status-text">Checking Local Engine...</span>
+        </div>
+        <div class="status-metadata">
+          <span class="meta-item"><strong id="model-name">gemma4:e2b</strong> (Ollama)</span>
+          <span class="meta-item badge-offline" title="Runs 100% offline on local GPU">⚡ Offline Ready</span>
+          <span class="meta-item" id="pipeline-mode-badge">Mode: single</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+      <!-- Input Panel -->
+      <section class="card input-card">
+        <div class="card-header">
+          <h2>Device Symptom Description</h2>
+          <span class="hint">Input plain-text hardware behavior, noises, or thermal events</span>
+        </div>
+
+        <!-- Quick Preset Case Chips -->
+        <div class="presets-bar">
+          <span class="preset-label">Quick Test Scenarios:</span>
+          <div class="preset-chips" id="preset-chips">
+            <!-- Dynamically populated from /api/examples -->
+          </div>
+        </div>
+
+        <div class="input-wrapper">
+          <textarea 
+            id="symptom-input" 
+            placeholder="Describe the hardware problem in detail (e.g. 'Laptop gets very hot on the bottom and fan is loud while idle, shutting down after 20 minutes')..."
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div class="input-actions">
+          <div class="mode-selector">
+            <label for="mode-select">Inference Mode:</label>
+            <select id="mode-select">
+              <option value="single" selected>Single-Pass (Fast & Structured)</option>
+              <option value="staged">Staged Micro-Prompts (Step-by-Step)</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button id="clear-btn" class="btn btn-secondary">Clear</button>
+            <button id="diagnose-btn" class="btn btn-primary">
+              <span class="btn-spinner" id="btn-spinner"></span>
+              <span id="btn-label">Diagnose Hardware</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results Panel -->
+      <section class="card results-card" id="results-card" style="display: none;">
+        <div class="card-header">
+          <div class="results-title-group">
+            <h2>Diagnostic Report</h2>
+            <div id="status-pill" class="status-pill"></div>
+          </div>
+          <button id="copy-json-btn" class="btn btn-sm btn-outline">Copy JSON</button>
+        </div>
+
+        <!-- Safety Alert Callout (Conditional) -->
+        <div id="safety-alert-banner" class="safety-banner" style="display: none;">
+          <div class="safety-icon">⚠️</div>
+          <div class="safety-body">
+            <h3>Physical Hazard Precaution</h3>
+            <p id="safety-alert-text"></p>
+          </div>
+        </div>
+
+        <!-- Needs More Info Card (Conditional) -->
+        <div id="needs-info-banner" class="needs-info-banner" style="display: none;">
+          <div class="needs-info-icon">❓</div>
+          <div class="needs-info-body">
+            <h3>Insufficient Evidence — Diagnostic Questions</h3>
+            <p>The symptom is ambiguous. Answering these targeted questions will isolate root causes:</p>
+            <ul id="follow-up-list" class="follow-up-list"></ul>
+          </div>
+        </div>
+
+        <!-- Symptom Distillation -->
+        <div class="section-block">
+          <h3 class="section-title">Symptom Distillation</h3>
+          <p id="symptom-summary" class="symptom-summary-text"></p>
+        </div>
+
+        <!-- Evidence & Causes Split View -->
+        <div class="diagnostic-grid">
+          <!-- Evidence Column -->
+          <div class="grid-column">
+            <h3 class="section-title">
+              Extracted Grounding Evidence
+              <span class="tooltip-trigger" title="Hover over an evidence tag to highlight which causes cite it">ⓘ</span>
+            </h3>
+            <div id="evidence-container" class="evidence-list">
+              <!-- Rendered evidence chips -->
+            </div>
+          </div>
+
+          <!-- Possible Causes Column -->
+          <div class="grid-column">
+            <h3 class="section-title">
+              Possible Root Causes
+              <span class="tooltip-trigger" title="Hover over a cause to see its supporting evidence">ⓘ</span>
+            </h3>
+            <div id="causes-container" class="causes-list">
+              <!-- Rendered cause cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Troubleshooting Roadmap -->
+        <div class="section-block">
+          <h3 class="section-title">Recommended Troubleshooting Steps (Safest-First)</h3>
+          <div id="steps-container" class="steps-list">
+            <!-- Rendered step rows -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Kyūmei is an open-source hardware diagnostic reasoning tool built for <strong>Hacktoberfest Hack Day Indore</strong> (PyData Indore × MLH).</p>
+      <p>Powered by local open-weight <strong>Gemma 4 E2B</strong> via Ollama &bull; Conforms to the <strong>Agent Skill Open Standard</strong> &bull; MIT License</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "id": "03_swollen_battery",
+  "title": "Trackpad Lifting / Swollen Battery Hazard",
+  "category": "Battery & Safety Hazard",
+  "symptom": "The laptop trackpad is bowing upwards and hard to click, and the aluminum bottom seam has started separating on the front edge.",
+  "expected_output": {
+    "status": "safety_alert",
+    "symptom_summary": "Mechanical chassis deformation and trackpad elevation caused by physical swelling of the internal lithium-ion battery pack.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "trackpad is bowing upwards and hard to click"
+      },
+      {
+        "id": "E2",
+        "text": "aluminum bottom seam has started separating on the front edge"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "Lithium-ion polymer battery cell gas generation and expansion from internal electrolyte breakdown.",
+        "evidence_ids": ["E1", "E2"],
+        "confidence": "high",
+        "verification": "Visual inspection of chassis profile confirms bulging directly below the trackpad where battery cells reside."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Immediately disconnect AC power adapter and power down the device completely.",
+        "rationale": "Prevents catastrophic thermal runaway, fire, or further electrical component short-circuits.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 2,
+        "action": "Place the unit on a non-flammable surface away from heat sources and flammable items.",
+        "rationale": "Mitigates fire hazard if a swollen lithium-ion pouch cell vents.",
+        "risk_level": "none"
+      },
+      {
+        "step_number": 3,
+        "action": "Take the device to an authorized repair technician equipped for hazardous hardware handling.",
+        "rationale": "Do NOT attempt DIY disassembly or puncturing of swollen batteries or mains power supplies.",
+        "risk_level": "none"
+      }
+    ],
+    "safety_warning": "SAFETY ALERT: Physical hardware hazard detected (battery swelling, thermal runaway, or electrical arcing risk). Immediately disconnect device from AC power. Do NOT attempt to pierce, press, charge, or disassemble the unit. Keep in a fire-resistant space and consult a certified hardware technician.",
+    "follow_up_questions": []
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "04_vague_input",
+  "title": "Ambiguous / Thin Evidence: Won't Turn On",
+  "category": "Thin Evidence & Triage",
+  "symptom": "My computer is completely dead and won't turn on.",
+  "expected_output": {
+    "status": "needs_more_info",
+    "symptom_summary": "User reports device will not power on, but provides insufficient detail to distinguish between AC wall failure, internal PSU fault, or power switch issues.",
+    "evidence": [
+      {
+        "id": "E1",
+        "text": "computer is completely dead and won't turn on"
+      }
+    ],
+    "possible_causes": [
+      {
+        "id": "C1",
+        "cause": "No AC electrical power reaching motherboard power distribution circuitry.",
+        "evidence_ids": ["E1"],
+        "confidence": "low",
+        "verification": "Test electrical outlet with another device and inspect power cable connector."
+      }
+    ],
+    "troubleshooting_steps": [
+      {
+        "step_number": 1,
+        "action": "Ensure the power cable is firmly seated into both the wall outlet and the power supply.",
+        "rationale": "Verifies basic physical connection non-invasively.",
+        "risk_level": "none"
+      }
+    ],
+    "safety_warning": null,
+    "follow_up_questions": [
+      "When you press the power button, do any lights (LEDs) turn on or blink, even momentarily?",
+      "Do you hear any sounds such as fans spinning, beeps, or clicking drives?",
+      "Is this a desktop PC or a laptop, and are you using the original power adapter?"
+    ]
+  }
+}
